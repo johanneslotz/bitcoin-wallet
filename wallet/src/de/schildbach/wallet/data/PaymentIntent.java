@@ -19,7 +19,6 @@ package de.schildbach.wallet.data;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 import javax.annotation.CheckForNull;
@@ -31,6 +30,7 @@ import android.os.Parcelable;
 
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.Coin;
 import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.Wallet.SendRequest;
@@ -57,10 +57,10 @@ public final class PaymentIntent implements Parcelable
 
 	public final static class Output implements Parcelable
 	{
-		public final BigInteger amount;
+		public final Coin amount;
 		public final Script script;
 
-		public Output(final BigInteger amount, final Script script)
+		public Output(final Coin amount, final Script script)
 		{
 			this.amount = amount;
 			this.script = script;
@@ -140,7 +140,7 @@ public final class PaymentIntent implements Parcelable
 
 		private Output(final Parcel in)
 		{
-			amount = (BigInteger) in.readSerializable();
+			amount = (Coin) in.readSerializable();
 
 			final int programLength = in.readInt();
 			final byte[] program = new byte[programLength];
@@ -189,7 +189,7 @@ public final class PaymentIntent implements Parcelable
 
 	private PaymentIntent(@Nonnull final Address address, @Nullable final String addressLabel)
 	{
-		this(null, null, null, buildSimplePayTo(BigInteger.ZERO, address), addressLabel, null, null, null);
+		this(null, null, null, buildSimplePayTo(Coin.ZERO, address), addressLabel, null, null, null);
 	}
 
 	public static PaymentIntent blank()
@@ -217,7 +217,7 @@ public final class PaymentIntent implements Parcelable
 				+ bluetoothMac : null, null, bitcoinUri.getPaymentRequestUrl());
 	}
 
-	public PaymentIntent mergeWithEditedValues(@Nullable final BigInteger editedAmount, @Nullable final Address editedAddress)
+	public PaymentIntent mergeWithEditedValues(@Nullable final Coin editedAmount, @Nullable final Address editedAddress)
 	{
 		final Output[] outputs;
 
@@ -256,7 +256,7 @@ public final class PaymentIntent implements Parcelable
 		return SendRequest.forTx(transaction);
 	}
 
-	private static Output[] buildSimplePayTo(final BigInteger amount, final Address address)
+	private static Output[] buildSimplePayTo(final Coin amount, final Address address)
 	{
 		return new Output[] { new Output(amount, ScriptBuilder.createOutputScript(address)) };
 	}
@@ -309,9 +309,9 @@ public final class PaymentIntent implements Parcelable
 		return false;
 	}
 
-	public BigInteger getAmount()
+	public Coin getAmount()
 	{
-		BigInteger amount = BigInteger.ZERO;
+		Coin amount = Coin.ZERO;
 
 		if (hasOutputs())
 			for (final Output output : outputs)
