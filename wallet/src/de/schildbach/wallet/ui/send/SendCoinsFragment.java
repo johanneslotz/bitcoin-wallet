@@ -145,6 +145,7 @@ public final class SendCoinsFragment extends SherlockFragment
 	private TextView receivingStaticLabelView;
 	private CheckBox directPaymentEnableView;
 
+	private TextView feeHintView;
 	private TextView directPaymentMessageView;
 	private ListView sentTransactionView;
 	private TransactionsListAdapter sentTransactionListAdapter;
@@ -517,6 +518,8 @@ public final class SendCoinsFragment extends SherlockFragment
 				}
 			}
 		});
+
+		feeHintView = (TextView) view.findViewById(R.id.send_coins_fragment_hint_fee);
 
 		directPaymentMessageView = (TextView) view.findViewById(R.id.send_coins_direct_payment_message);
 
@@ -1040,6 +1043,8 @@ public final class SendCoinsFragment extends SherlockFragment
 	{
 		if (paymentIntent != null)
 		{
+			final CoinFormat btcFormat = config.getFormat();
+
 			getView().setVisibility(View.VISIBLE);
 
 			if (paymentIntent.hasPayee())
@@ -1119,10 +1124,38 @@ public final class SendCoinsFragment extends SherlockFragment
 			directPaymentEnableView.setVisibility(directPaymentVisible ? View.VISIBLE : View.GONE);
 			directPaymentEnableView.setEnabled(state == State.INPUT);
 
+			feeHintView.setVisibility(View.GONE);
+			if (state == State.INPUT)
+			{
+				final Coin amount = amountCalculatorLink.getAmount();
+				if (amount != null)
+				{
+					try
+					{
+						final Address dummyAddress = application.determineSelectedAddress();
+						final SendRequest sendRequest = paymentIntent.mergeWithEditedValues(amount, dummyAddress).toSendRequest();
+						sendRequest.signInputs = false;
+						sendRequest.emptyWallet = paymentIntent.mayEditAmount() && amount.equals(wallet.getBalance(BalanceType.AVAILABLE));
+						wallet.completeTx(sendRequest);
+						final Coin txFee = sendRequest.tx.getFee();
+						if (txFee != null)
+						{
+							feeHintView.setText(getString(R.string.send_coins_fragment_fee_hint, btcFormat.format(txFee)));
+							feeHintView.setVisibility(View.VISIBLE);
+						}
+					}
+					catch (final Exception x)
+					{
+						log.info("cannot determine fee in advance", x);
+						// swallow
+					}
+				}
+			}
+
 			if (sentTransaction != null)
 			{
 				sentTransactionView.setVisibility(View.VISIBLE);
-				sentTransactionListAdapter.setFormat(config.getFormat());
+				sentTransactionListAdapter.setFormat(btcFormat);
 				sentTransactionListAdapter.replace(sentTransaction);
 			}
 			else
