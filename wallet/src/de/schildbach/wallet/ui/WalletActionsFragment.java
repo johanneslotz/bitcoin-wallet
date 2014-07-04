@@ -18,14 +18,21 @@
 package de.schildbach.wallet.ui;
 
 import android.app.Activity;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
+
+import com.google.bitcoin.core.Wallet;
+
+import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet_test.R;
 
 /**
@@ -34,6 +41,8 @@ import de.schildbach.wallet_test.R;
 public final class WalletActionsFragment extends Fragment
 {
 	private WalletActivity activity;
+	private WalletApplication application;
+	private Wallet wallet;
 
 	@Override
 	public void onAttach(final Activity activity)
@@ -41,6 +50,8 @@ public final class WalletActionsFragment extends Fragment
 		super.onAttach(activity);
 
 		this.activity = (WalletActivity) activity;
+		this.application = (WalletApplication) activity.getApplication();
+		this.wallet = application.getWallet();
 	}
 
 	@Override
@@ -55,6 +66,18 @@ public final class WalletActionsFragment extends Fragment
 			public void onClick(final View v)
 			{
 				activity.handleRequestCoins();
+			}
+		});
+		requestButton.setOnLongClickListener(new OnLongClickListener()
+		{
+			@Override
+			public boolean onLongClick(final View v)
+			{
+				activity.longToast(application.packageInfo().packageName + '\n' + application.packageInfo().versionName + '\n'
+						+ wallet.getLastBlockSeenHeight());
+				RingtoneManager.getRingtone(activity, Uri.parse("android.resource://" + activity.getPackageName() + "/" + R.raw.coins_received))
+						.play();
+				return true;
 			}
 		});
 
