@@ -35,7 +35,6 @@ import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.Base58;
 import com.google.bitcoin.core.DumpedPrivateKey;
-import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.ProtocolException;
 import com.google.bitcoin.core.Transaction;
@@ -139,9 +138,9 @@ public abstract class InputParser
 			{
 				try
 				{
-					final ECKey key = new DumpedPrivateKey(Constants.NETWORK_PARAMETERS, input).getKey();
+					new DumpedPrivateKey(Constants.NETWORK_PARAMETERS, input); // validate
 
-					handlePrivateKey(key);
+					handlePrivateKey(input);
 				}
 				catch (final AddressFormatException x)
 				{
@@ -174,6 +173,21 @@ public abstract class InputParser
 			else
 			{
 				cannotClassify(input);
+			}
+		}
+
+		protected void handlePrivateKey(@Nonnull final String key)
+		{
+			try
+			{
+				final DumpedPrivateKey dumpedKey = new DumpedPrivateKey(Constants.NETWORK_PARAMETERS, key);
+				final Address address = new Address(Constants.NETWORK_PARAMETERS, dumpedKey.getKey().getPubKeyHash());
+
+				handlePaymentIntent(PaymentIntent.fromAddress(address, null));
+			}
+			catch (final AddressFormatException x)
+			{
+				throw new RuntimeException(x);
 			}
 		}
 	}
@@ -230,12 +244,6 @@ public abstract class InputParser
 			{
 				cannotClassify(inputType);
 			}
-		}
-
-		@Override
-		protected final void handlePrivateKey(@Nonnull final ECKey key)
-		{
-			throw new UnsupportedOperationException();
 		}
 
 		@Override
@@ -316,12 +324,6 @@ public abstract class InputParser
 		}
 
 		@Override
-		protected final void handlePrivateKey(@Nonnull final ECKey key)
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
 		protected final void handleDirectTransaction(@Nonnull final Transaction transaction) throws VerificationException
 		{
 			throw new UnsupportedOperationException();
@@ -338,13 +340,6 @@ public abstract class InputParser
 	}
 
 	protected abstract void handlePaymentIntent(@Nonnull PaymentIntent paymentIntent);
-
-	protected void handlePrivateKey(@Nonnull final ECKey key)
-	{
-		final Address address = new Address(Constants.NETWORK_PARAMETERS, key.getPubKeyHash());
-
-		handlePaymentIntent(PaymentIntent.fromAddress(address, null));
-	}
 
 	protected abstract void handleDirectTransaction(@Nonnull Transaction transaction) throws VerificationException;
 

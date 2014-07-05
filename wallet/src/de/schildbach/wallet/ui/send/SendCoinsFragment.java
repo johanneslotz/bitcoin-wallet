@@ -76,7 +76,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
-import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.Sha256Hash;
 import com.google.bitcoin.core.Transaction;
@@ -1233,7 +1232,7 @@ public final class SendCoinsFragment extends SherlockFragment
 			}
 
 			@Override
-			protected void handlePrivateKey(@Nonnull final ECKey key)
+			protected void handlePrivateKey(@Nonnull final String key)
 			{
 				throw new UnsupportedOperationException();
 			}

@@ -25,7 +25,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.VerificationException;
 
@@ -68,7 +67,7 @@ public final class SendCoinsQrActivity extends Activity
 				}
 
 				@Override
-				protected void handlePrivateKey(@Nonnull final ECKey key)
+				protected void handlePrivateKey(@Nonnull final String key)
 				{
 					SweepWalletActivity.start(SendCoinsQrActivity.this, key);
 

@@ -195,7 +195,7 @@ public final class WalletActivity extends AbstractWalletActivity
 				}
 
 				@Override
-				protected void handlePrivateKey(@Nonnull final ECKey key)
+				protected void handlePrivateKey(@Nonnull final String key)
 				{
 					SweepWalletActivity.start(WalletActivity.this, key);
 				}

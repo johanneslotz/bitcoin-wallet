@@ -29,7 +29,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ECKey;
+import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.Sha256Hash;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.TransactionConfidence;
@@ -123,14 +124,9 @@ public class SweepWalletFragment extends SherlockFragment
 			final Intent intent = activity.getIntent();
 
 			if (intent.hasExtra(SweepWalletActivity.INTENT_EXTRA_KEY))
-			{
-				final ECKey key = (ECKey) intent.getSerializableExtra(SweepWalletActivity.INTENT_EXTRA_KEY);
-				init(key);
-			}
+				init(intent.getStringExtra(SweepWalletActivity.INTENT_EXTRA_KEY));
 			else
-			{
 				walletToSweep = null;
-			}
 		}
 	}
 
@@ -235,7 +231,7 @@ public class SweepWalletFragment extends SherlockFragment
 				new StringInputParser(input)
 				{
 					@Override
-					protected void handlePrivateKey(@Nonnull final ECKey key)
+					protected void handlePrivateKey(@Nonnull final String key)
 					{
 						init(key);
 					}
@@ -348,20 +344,29 @@ public class SweepWalletFragment extends SherlockFragment
 		}
 	};
 
-	private void init(final ECKey key)
+	private void init(final String key)
 	{
-		walletToSweep = new Wallet(Constants.NETWORK_PARAMETERS);
-		walletToSweep.addKey(key);
-
-		// delay these actions until fragment is resumed
-		handler.post(new Runnable()
+		try
 		{
-			@Override
-			public void run()
+			final DumpedPrivateKey dumpedKey = new DumpedPrivateKey(Constants.NETWORK_PARAMETERS, key);
+
+			walletToSweep = new Wallet(Constants.NETWORK_PARAMETERS);
+			walletToSweep.addKey(dumpedKey.getKey());
+
+			// delay these actions until fragment is resumed
+			handler.post(new Runnable()
 			{
-				requestWalletBalance();
-			}
-		});
+				@Override
+				public void run()
+				{
+					requestWalletBalance();
+				}
+			});
+		}
+		catch (final AddressFormatException x)
+		{
+			throw new RuntimeException(x);
+		}
 	}
 
 	private void requestWalletBalance()
