@@ -876,9 +876,12 @@ public final class SendCoinsFragment extends Fragment
 		final SendRequest sendRequest = finalPaymentIntent.toSendRequest();
 		sendRequest.emptyWallet = paymentIntent.mayEditAmount() && finalAmount.equals(wallet.getBalance(BalanceType.AVAILABLE));
 		
-		sendRequest.fee = Coin.valueOf(1000);		
-		sendRequest.feePerKb = Coin.valueOf(0);		
-		sendRequest.ensureMinRequiredFee = false;		
+		if (config.getUseStaticLowFee())
+		{	
+			sendRequest.fee = Coin.valueOf(1000);		
+			sendRequest.feePerKb = Coin.valueOf(0);		
+			sendRequest.ensureMinRequiredFee = false;		
+		}
 
 		new SendCoinsOfflineTask(wallet, backgroundHandler)
 		{

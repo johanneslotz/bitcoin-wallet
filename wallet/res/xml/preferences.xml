@@ -55,6 +55,11 @@
 			android:title="Show disclaimer" />
 		<CheckBoxPreference
 			android:defaultValue="false"
+			android:key="labs_use_static_low_fee"
+			android:summary="Use fee of 0.01 mBTC in ALL TRANSACTIONS"
+			android:title="Use low fee on ALL TRANSACTIONS" />
+		<CheckBoxPreference
+			android:defaultValue="false"
 			android:key="labs_qr_payment_request"
 			android:summary="Use payment protocol for QR-code initiated payments"
 			android:title="BIP70 for scan-to-pay" />
