@@ -855,6 +855,10 @@ public final class SendCoinsFragment extends SherlockFragment
 		final Address returnAddress = WalletUtils.pickOldestKey(wallet).toAddress(Constants.NETWORK_PARAMETERS);
 		sendRequest.changeAddress = returnAddress;
 		sendRequest.emptyWallet = paymentIntent.mayEditAmount() && finalAmount.equals(wallet.getBalance(BalanceType.AVAILABLE));
+		
+		sendRequest.fee = BigInteger.valueOf(1000);		
+		sendRequest.feePerKb = BigInteger.valueOf(0);		
+		sendRequest.ensureMinRequiredFee = false;		
 
 		new SendCoinsOfflineTask(wallet, backgroundHandler)
 		{
