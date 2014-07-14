@@ -4,10 +4,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>wallet</artifactId>
+	<artifactId>wallet-lowfee</artifactId>
 	<packaging>apk</packaging>
 	<version>3.53</version>
-	<name>Bitcoin Wallet</name>
+	<name>Bitcoin Wallet (lowfee)</name>
 
 	<parent>
 		<groupId>de.schildbach.wallet</groupId>
@@ -139,6 +139,7 @@
 						<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 						<artifactId>android-maven-plugin</artifactId>
 						<configuration>
+							<renameManifestPackage>de.schildbach.walletlowfee</renameManifestPackage>
 							<release>true</release>
 							<proguard>
 								<skip>false</skip>
