@@ -47,6 +47,7 @@ public class Configuration
 	public static final String PREFS_KEY_DISCLAIMER = "disclaimer";
 	public static final String PREFS_KEY_SELECTED_ADDRESS = "selected_address";
 	private static final String PREFS_KEY_LABS_QR_PAYMENT_REQUEST = "labs_qr_payment_request";
+	public static final String PREFS_KEY_USE_STATIC_LOW_FEE = "labs_use_static_low_fee";
 
 	private static final String PREFS_KEY_LAST_VERSION = "last_version";
 	private static final String PREFS_KEY_LAST_USED = "last_used";
@@ -150,7 +151,12 @@ public class Configuration
 	{
 		return prefs.getBoolean(PREFS_KEY_DISCLAIMER, true);
 	}
-
+	
+	public boolean getUseStaticLowFee()
+	{
+		return prefs.getBoolean(PREFS_KEY_USE_STATIC_LOW_FEE, false);
+	}
+	
 	public String getSelectedAddress()
 	{
 		return prefs.getString(PREFS_KEY_SELECTED_ADDRESS, null);
