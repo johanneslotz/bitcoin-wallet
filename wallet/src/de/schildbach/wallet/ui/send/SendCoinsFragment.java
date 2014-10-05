@@ -878,8 +878,8 @@ public final class SendCoinsFragment extends Fragment
 		
 		if (config.getUseStaticLowFee())
 		{	
-			sendRequest.fee = BigInteger.valueOf(1000);		
-			sendRequest.feePerKb = BigInteger.valueOf(0);		
+			sendRequest.fee = Coin.valueOf(1000);		
+			sendRequest.feePerKb = Coin.valueOf(0);		
 			sendRequest.ensureMinRequiredFee = false;		
 		}
 
