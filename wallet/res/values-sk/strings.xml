@@ -14,8 +14,6 @@
 	<string name="blockchain_state_progress_problem_network">Synchronizácia: Problém so sieťou</string>
 	<string name="wallet_address_fragment_your">Vaša Bitcoin adresa:</string>
 	<string name="wallet_address_fragment_clipboard_msg">Adresa skopírovaná do schránky</string>
-	<string name="wallet_addresses_fragment_add_dialog_title">Pridať Bitcoin adresu</string>
-	<string name="wallet_addresses_fragment_add_dialog_message">Bitcoin adresa sa nedá zmazať. Chcete pridať do peňaženky novú adresu?</string>
 	<string name="wallet_balance_fragment_replaying">Zostatok je nedostupný počas synchronizácie.</string>
 	<string name="exchange_rates_activity_title">Výmenné kurzy</string>
 	<string name="exchange_rates_fragment_empty_text">Nepodarilo sa načítať výmenné kurzy</string>
@@ -33,7 +31,6 @@
 	<string name="wallet_transactions_row_warning_backup">Gratulujeme, obdržali ste svoju prvú platbu! Urobili ste &lt;u&gt;zálohu peňaženky&lt;/u&gt;, aby ste ju ochránili pred stratou?</string>
 	<string name="wallet_transactions_fragment_coinbase">vyťažené</string>
 	<string name="wallet_transactions_fragment_internal">vnútorné</string>
-	<string name="wallet_transactions_context_show_qr_title">Ukáž QR kód</string>
 	<string name="wallet_options_safety">Bezpečnosť</string>
 	<string name="wallet_options_donate">Prispieť</string>
 	<string name="wallet_donate_address_label">Prispieť na Bitcoin Wallet</string>
@@ -93,9 +90,7 @@
 	<string name="address_book_context_send_title">Odoslať Bitcoiny na adresu</string>
 	<string name="address_book_context_edit_title">Upraviť adresu</string>
 	<string name="address_book_context_remove_title">Odstrániť adresu</string>
-	<string name="address_book_context_show_qr_title">Zobraziť QR kód</string>
 	<string name="address_book_context_copy_to_clipboard_title">Skopírovať do schránky</string>
-	<string name="address_book_context_default_title">Nastaviť ako predvolenú adresu</string>
 	<string name="address_book_options_paste_from_clipboard_title">Prilepiť zo schránky</string>
 	<string name="address_book_options_paste_from_clipboard_empty">Schránka je prázdna</string>
 	<string name="address_book_options_paste_from_clipboard_invalid">Dáta zo schránky nebolo možné rozpoznať</string>
@@ -128,11 +123,7 @@
 	<string name="import_keys_dialog_file_created_automatic">automaticky zálohované %s</string>
 	<string name="import_keys_dialog_file_created_manual">manuálne zálohované %s</string>
 	<string name="import_keys_dialog_button_import">Obnoviť</string>
-	<string name="import_keys_dialog_success_imported">%d privátne kľúče boli obnovené.</string>
-	<string name="import_keys_dialog_success_existing">%d privátne kľúče neboli obnovené, pretože tieto kľúče už existujú v peňaženke.</string>
-	<string name="import_keys_dialog_success_reset">Je potrebné zresetovať blockchain, aby bolo možné zistiť zostatok. Pokračovať?</string>
 	<string name="import_keys_dialog_failure">Privátne kľúče sa nepodarilo obnoviť:\n\n%s\n\nNesprávne heslo?</string>
-	<string name="import_keys_dialog_button_reset_blockchain">Reset</string>
 	<string name="export_keys_dialog_title">Zálohovať privátne kľúče</string>
 	<string name="export_keys_dialog_message">Privátne kľúče budú zašifrované zvoleným heslom a uložené na externú pamäť.</string>
 	<string name="export_keys_dialog_button_export">Zálohovať</string>
@@ -219,6 +210,7 @@
 	<string name="button_scan">Skenovať</string>
 	<string name="button_edit_address">Pridať/zmeniť adresu</string>
 	<string name="button_settings">Nastavenia</string>
+	<string name="action_show_qr">Ukáž QR kód</string>
 	<string name="action_browse">Otvoriť v prehliadači</string>
 	<string name="time_today">dnes</string>
 	<string name="address_unlabeled">(neoznačené)</string>

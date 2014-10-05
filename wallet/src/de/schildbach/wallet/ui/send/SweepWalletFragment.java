@@ -3,8 +3,26 @@ package de.schildbach.wallet.ui.send;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.bitcoinj.core.Address;
+import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.core.Transaction;
+import org.bitcoinj.core.TransactionConfidence;
+import org.bitcoinj.core.VerificationException;
+import org.bitcoinj.core.Wallet;
+import org.bitcoinj.core.Wallet.BalanceType;
+import org.bitcoinj.core.Wallet.SendRequest;
+import org.bitcoinj.utils.MonetaryFormat;
+import org.bitcoinj.wallet.KeyChainGroup;
+import org.bitcoinj.wallet.WalletTransaction;
+import org.bitcoinj.wallet.WalletTransaction.Pool;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,31 +33,16 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.Sha256Hash;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.TransactionConfidence;
-import com.google.bitcoin.core.VerificationException;
-import com.google.bitcoin.core.Wallet;
-import com.google.bitcoin.core.Wallet.BalanceType;
-import com.google.bitcoin.core.Wallet.SendRequest;
-import com.google.bitcoin.wallet.WalletTransaction;
-import com.google.bitcoin.wallet.WalletTransaction.Pool;
-
 import de.schildbach.wallet.Configuration;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
@@ -50,14 +53,14 @@ import de.schildbach.wallet.ui.InputParser.StringInputParser;
 import de.schildbach.wallet.ui.ProgressDialogFragment;
 import de.schildbach.wallet.ui.ScanActivity;
 import de.schildbach.wallet.ui.TransactionsListAdapter;
-import de.schildbach.wallet.util.GenericUtils;
+import de.schildbach.wallet.util.MonetarySpannable;
 import de.schildbach.wallet.util.WalletUtils;
 import de.schildbach.wallet_test.R;
 
 /**
  * @author Maximilian Keller
  */
-public class SweepWalletFragment extends SherlockFragment
+public class SweepWalletFragment extends Fragment
 {
 	private AbstractBindServiceActivity activity;
 	private WalletApplication application;
@@ -350,8 +353,10 @@ public class SweepWalletFragment extends SherlockFragment
 
 	private void init(final ECKey key)
 	{
-		walletToSweep = new Wallet(Constants.NETWORK_PARAMETERS);
-		walletToSweep.addKey(key);
+		// create non-HD wallet
+		final KeyChainGroup group = new KeyChainGroup(Constants.NETWORK_PARAMETERS);
+		group.importKeys(key);
+		walletToSweep = new Wallet(Constants.NETWORK_PARAMETERS, group);
 
 		// delay these actions until fragment is resumed
 		handler.post(new Runnable()
@@ -402,24 +407,20 @@ public class SweepWalletFragment extends SherlockFragment
 			}
 		};
 
-		final Address address = walletToSweep.getKeys().iterator().next().toAddress(Constants.NETWORK_PARAMETERS);
+		final Address address = walletToSweep.getImportedKeys().iterator().next().toAddress(Constants.NETWORK_PARAMETERS);
 		new RequestWalletBalanceTask(backgroundHandler, callback, application.httpUserAgent()).requestWalletBalance(address);
 	}
 
 	private void updateView()
 	{
+		final MonetaryFormat btcFormat = config.getFormat();
+
 		if (walletToSweep != null)
 		{
-			final int btcShift = config.getBtcShift();
-			final int btcPrecision = config.getBtcMaxPrecision();
-			final String btcPrefix = config.getBtcPrefix();
-
 			balanceView.setVisibility(View.VISIBLE);
-			final SpannableStringBuilder balance = new SpannableStringBuilder(GenericUtils.formatValue(
-					walletToSweep.getBalance(BalanceType.ESTIMATED), btcPrecision, btcShift));
-			WalletUtils.formatSignificant(balance, null);
-			balance.insert(0, " "); // insert backwards
-			balance.insert(0, btcPrefix);
+			final MonetarySpannable balanceSpannable = new MonetarySpannable(btcFormat, walletToSweep.getBalance(BalanceType.ESTIMATED));
+			balanceSpannable.applyMarkup(null, null, null);
+			final SpannableStringBuilder balance = new SpannableStringBuilder(balanceSpannable);
 			balance.insert(0, ": ");
 			balance.insert(0, getString(R.string.sweep_wallet_fragment_balance));
 			balanceView.setText(balance);
@@ -435,11 +436,8 @@ public class SweepWalletFragment extends SherlockFragment
 
 		if (sentTransaction != null)
 		{
-			final int btcPrecision = config.getBtcPrecision();
-			final int btcShift = config.getBtcShift();
-
 			sweepTransactionView.setVisibility(View.VISIBLE);
-			sweepTransactionListAdapter.setPrecision(btcPrecision, btcShift);
+			sweepTransactionListAdapter.setFormat(btcFormat);
 			sweepTransactionListAdapter.replace(sentTransaction);
 		}
 		else
@@ -489,7 +487,7 @@ public class SweepWalletFragment extends SherlockFragment
 		state = State.PREPARATION;
 		updateView();
 
-		final SendRequest sendRequest = SendRequest.emptyWallet(application.determineSelectedAddress());
+		final SendRequest sendRequest = SendRequest.emptyWallet(application.getWallet().freshReceiveAddress());
 
 		new SendCoinsOfflineTask(walletToSweep, backgroundHandler)
 		{
@@ -504,6 +502,18 @@ public class SweepWalletFragment extends SherlockFragment
 				sentTransaction.getConfidence().addEventListener(sentTransactionConfidenceListener);
 
 				application.processDirectTransaction(sentTransaction);
+			}
+
+			@Override
+			protected void onInsufficientMoney(@Nullable final Coin missing)
+			{
+				state = State.FAILED;
+				updateView();
+
+				final DialogBuilder dialog = DialogBuilder.warn(activity, R.string.sweep_wallet_fragment_insufficient_money_title);
+				dialog.setMessage(R.string.sweep_wallet_fragment_insufficient_money_msg);
+				dialog.setNeutralButton(R.string.button_dismiss, null);
+				dialog.show();
 			}
 
 			@Override

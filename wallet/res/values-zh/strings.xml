@@ -14,8 +14,6 @@
 	<string name="blockchain_state_progress_problem_network">同步: 检查网络</string>
 	<string name="wallet_address_fragment_your">您的比特币地址：</string>
 	<string name="wallet_address_fragment_clipboard_msg">比特币地址已复制到剪贴板</string>
-	<string name="wallet_addresses_fragment_add_dialog_title">添加比特币地址</string>
-	<string name="wallet_addresses_fragment_add_dialog_message">不能删除比特币地址，或许你想要一个新地址？</string>
 	<string name="wallet_balance_fragment_replaying">回档过程中的余额不可用。</string>
 	<string name="exchange_rates_activity_title">汇率</string>
 	<string name="exchange_rates_fragment_empty_text">无法加载汇率。</string>
@@ -35,7 +33,6 @@
 	<string name="wallet_transactions_row_warning_backup">恭喜你，你收到你的首次付款！ 你已经 &lt;u&gt;备份你的钱包&lt;/u&gt;, 以防止损失？</string>
 	<string name="wallet_transactions_fragment_coinbase">已挖掘的</string>
 	<string name="wallet_transactions_fragment_internal">內部</string>
-	<string name="wallet_transactions_context_show_qr_title">显示QR二维码</string>
 	<string name="wallet_options_safety_menu">安全</string>
 	<string name="wallet_options_safety">安全及风险提示</string>
 	<string name="wallet_options_donate">捐赠</string>
@@ -98,9 +95,7 @@
 	<string name="address_book_context_send_title">支付给本地址</string>
 	<string name="address_book_context_edit_title">编辑地址</string>
 	<string name="address_book_context_remove_title">删除地址</string>
-	<string name="address_book_context_show_qr_title">显示QR二维码</string>
 	<string name="address_book_context_copy_to_clipboard_title">复制到剪切板</string>
-	<string name="address_book_context_default_title">设置为缺省比特币地址</string>
 	<string name="address_book_options_paste_from_clipboard_title">從剪貼板上粘貼</string>
 	<string name="address_book_options_paste_from_clipboard_empty">剪切板为空</string>
 	<string name="address_book_options_paste_from_clipboard_invalid">无法识别剪切板的数据</string>
@@ -136,11 +131,7 @@
 	<string name="import_keys_dialog_file_created_manual">手动备份 %s</string>
 	<string name="import_keys_dialog_button_import">恢复</string>
 	<string name="restore_wallet_dialog_success">钱包被恢复。</string>
-	<string name="import_keys_dialog_success_imported">%d 的私钥进行恢复。</string>
-	<string name="import_keys_dialog_success_existing">%d 的私钥未恢复，因为他们已经在你的钱包。</string>
-	<string name="import_keys_dialog_success_reset">你需要重置blockchain以更新您的余额。你想？</string>
 	<string name="import_keys_dialog_failure">钱包无法还原:\n\n%s\n\n密码错误？</string>
-	<string name="import_keys_dialog_button_reset_blockchain">复位</string>
 	<string name="export_keys_dialog_title">备份钱包</string>
 	<string name="export_keys_dialog_message">你的钱包所选择的密码将被加密，并写入到外部存储。</string>
 	<string name="export_keys_dialog_button_export">备份</string>
@@ -231,6 +222,7 @@
 	<string name="button_scan">掃描</string>
 	<string name="button_edit_address">添加/编辑地址</string>
 	<string name="button_settings">设置</string>
+	<string name="action_show_qr">显示QR二维码</string>
 	<string name="action_browse">浏览</string>
 	<string name="time_today">今天</string>
 	<string name="address_unlabeled">(无标签)</string>
